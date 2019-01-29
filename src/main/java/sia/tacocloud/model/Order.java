@@ -1,6 +1,7 @@
 package sia.tacocloud.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
@@ -15,6 +16,7 @@ public class Order {
 	
 	private Long id;
 	private Date createdAt;
+	private List<Taco> tacos;
 	
 	@NotBlank(message="Name is required")
 	private String name;
