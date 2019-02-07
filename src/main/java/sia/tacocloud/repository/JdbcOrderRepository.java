@@ -16,7 +16,7 @@ import sia.tacocloud.model.Order;
 import sia.tacocloud.model.Taco;
 
 @Repository
-public class JdbcOrderRepository implements OrderRepository {
+public class JdbcOrderRepository {//implements OrderRepository {
 
 	private SimpleJdbcInsert orderInserter;
 	private SimpleJdbcInsert orderTacoInserter;
@@ -32,9 +32,8 @@ public class JdbcOrderRepository implements OrderRepository {
 
 	}
 
-	@Override
 	public Order save(Order order) {
-		order.setCreatedAt(new Date());
+		order.setPlacedAt(new Date()); 
 
 		long orderId = saveOrderDetails(order);
 		order.setId(orderId);
@@ -50,7 +49,7 @@ public class JdbcOrderRepository implements OrderRepository {
 	private long saveOrderDetails(Order order) {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> values = objectMapper.convertValue(order, Map.class);
-		values.put("createdAt", order.getCreatedAt());
+		values.put("createdAt", order.getPlacedAt());
 		long orderId = orderInserter.executeAndReturnKey(values).longValue();
 		return orderId;
 	}

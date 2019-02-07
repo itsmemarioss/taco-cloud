@@ -43,8 +43,15 @@ public class DesignTacoController {
 
 	@GetMapping
 	public String showDesignForm(Model model) {
-		List<Ingredient> ingredients = new ArrayList<>();
+		addIngredients(model);
 
+		model.addAttribute("design", new Taco());
+		return "design";
+	}
+
+	private void addIngredients(Model model) {
+		List<Ingredient> ingredients = new ArrayList<>();
+		
 		ingredientRepository.findAll().forEach(ingredients::add);
 
 		Type[] types = Ingredient.Type.values();
@@ -52,9 +59,7 @@ public class DesignTacoController {
 		for (Type type : types) {
 			model.addAttribute(type.toString().toLowerCase(), filterByType(ingredients, type));
 		}
-
-		model.addAttribute("design", new Taco());
-		return "design";
+		
 	}
 
 	private List<Ingredient> filterByType(List<Ingredient> ingredients, Type type) {
@@ -62,10 +67,13 @@ public class DesignTacoController {
 	}
 
 	@PostMapping
-	public String processDesign(@Valid Taco design, Errors erros, @ModelAttribute Order order) {
+	public String processDesign(@Valid Taco design, Errors erros, @ModelAttribute Order order, Model model) {
 		
-		if (erros.hasErrors())			
+		if (erros.hasErrors()) {
+			addIngredients(model);
+			model.addAttribute("design", design);
 			return "design";
+		}
 		
 		Taco saved = designRepo.save(design);
 		order.addDesign(saved);
@@ -78,11 +86,6 @@ public class DesignTacoController {
 	@ModelAttribute(name = "order")
 	public Order order() {
 		return new Order();
-	}
-
-	@ModelAttribute(name = "taco")
-	public Taco taco() {
-		return new Taco();
 	}
 
 }
